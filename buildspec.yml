@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11  # Use Python 3.11
+    commands:
+      - echo "Installing required Python packages..."
+      - pip install pyinstaller
+  build:
+    commands:
+      - echo "Building the Tkinter To-Do App into an executable..."
+      - pyinstaller --onefile --noconsole todo_app.py
+  post_build:
+    commands:
+      - echo "Packaging complete. Preparing for deployment..."
+      - mkdir -p output
+      - mv dist/todo_app ./output/  # Move the executable to the output directory
+
+artifacts:
+  files:
+    - output/*  # Include the executable in the build artifacts
