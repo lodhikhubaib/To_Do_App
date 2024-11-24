@@ -3,8 +3,10 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.11  # Use Python 3.11
+      python: 3.11
     commands:
+      - echo "Installing dependencies..."
+      - python --version
       - echo "No dependencies to install. Proceeding with build."
 
   build:
@@ -16,15 +18,19 @@ phases:
   post_build:
     commands:
       - echo "Build complete. Preparing to upload artifacts."
-      - mkdir -p output  # Create the output folder if it doesn't exist
-      - cp todo_app.py output/  # Copy your main app script to the output folder
+      - mkdir -p output
+      - echo "Output folder created."
+      - cp todo_app.py output/
       - echo "Files copied to the output folder."
+      - echo "Uploading to S3 bucket khubbucket/output/..."
+      - aws s3 cp output/ s3://khubbucket/output/ --recursive
+      - echo "Files uploaded to S3."
 
 artifacts:
   files:
-    - output/*  # Include everything inside the output folder
-  base-directory: '.'  # The root directory of your repository
-  discard-paths: yes  # Upload everything as flat files in the S3 folder
+    - output/*
+  base-directory: '.'
+  discard-paths: yes
   s3:
-    bucket: khubbucket  # Replace with your actual bucket name
-    key: output/  # The S3 folder where you want the artifacts uploaded
+    bucket: khubbucket
+    key: output/
