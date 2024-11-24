@@ -10,15 +10,22 @@ phases:
 
   build:
     commands:
+      - echo "Listing files in the current directory:"
+      - ls -al  # List files to ensure the todo_app.py is present
       - echo "Building the Tkinter To-Do App into an executable..."
       - pyinstaller --onefile --noconsole todo_app.py || (echo "PyInstaller failed. Check the error logs." && exit 1)
-      - ls -al dist  # List files in the dist folder to ensure output is generated
+      - echo "Listing files in dist folder:"
+      - ls -al dist  # List files to check if the executable is created
+      - ls -al dist/*  # Check all files in dist folder
 
   post_build:
     commands:
       - echo "Packaging complete. Preparing for deployment..."
+      - ls -al dist  # Ensure the executable is in dist
       - mkdir -p output
-      - mv dist/todo_app ./output/  # Move the executable to the output directory
+      - mv dist/todo_app ./output/ || (echo "Move failed. Check if the file exists in dist." && exit 1)
+      - echo "Uploading the executable to S3..."
+      - aws s3 cp ./output/todo_app s3://khubbucket/output/todo_app --N.Virginia
 
 artifacts:
   files:
