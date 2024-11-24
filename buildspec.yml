@@ -44,8 +44,9 @@ phases:
     commands:
       - echo Installing dependencies...
       - pip install --upgrade pip
-      - pip install -r requirements.txt
-      - pip install pyinstaller  # Install PyInstaller for creating .exe file
+      - pip install pyinstaller==5.11.0  # Install PyInstaller for creating .exe file
+      - pip install streamlit==1.16.0    # Install Streamlit for app functionality
+      - pip install pytest==7.4.0        # Install Pytest for testing
   pre_build:
     commands:
       - echo Running pre-build checks...
@@ -53,6 +54,9 @@ phases:
       - pip --version
   build:
     commands:
+      - echo Running tests...
+      - pytest tests/ --junitxml=report.xml  # Run the tests and generate a report
+      - echo Tests completed.
       - echo Building the executable...
       - pyinstaller --onefile todo_app.py  # Replace with your Python script file
       - echo Build complete. Executable created in 'dist' directory.
@@ -66,10 +70,9 @@ phases:
 artifacts:
   files:
     - artifacts/todo_app.exe  # Specify the path to your .exe file
+    - report.xml              # Include the test report if needed
   discard-paths: yes
   base-directory: artifacts
   s3:
     bucket: khubbucket
-    key: output/
-    path: todo-app-builds
-
+    path: output/todo-app-builds  # Store in the 'output' folder in the S3 bucket
