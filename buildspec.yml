@@ -73,7 +73,7 @@ artifacts:
     - artifacts/todo_app.exe  # Path to the .exe in the artifacts folder
     - report.xml              # Include the test report if needed
   discard-paths: yes
-  base-directory: artifacts
+  base-directory: '.'
   s3:
     bucket: khubbucket
     path: artifacts/  # Folder in S3 where the artifacts will be uploaded
