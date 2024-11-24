@@ -7,7 +7,7 @@ phases:
     commands:
       - echo "Installing required Python packages..."
       - pip install pyinstaller
-      - pip install -r requirements.txt  # if you have a requirements.txt file
+      - pip install -r requirement.txt  # if you have a requirements.txt file
   build:
     commands:
       - echo "Building the Tkinter To-Do App into an executable..."
