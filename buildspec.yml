@@ -76,4 +76,4 @@ artifacts:
   base-directory: artifacts
   s3:
     bucket: khubbucket
-    path: output/  # Folder in S3 where the artifacts will be uploaded
+    path: artifacts/  # Folder in S3 where the artifacts will be uploaded
