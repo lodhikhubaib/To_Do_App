@@ -3,21 +3,22 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.11
+      python: 3.11  # Use Python 3.11
     commands:
       - echo "Installing required Python packages..."
-      - pip install pyinstaller
-      - pip install -r requirement.txt  # if you have a requirements.txt file
+      - pip install -r requirements.txt  # Install dependencies from requirements.txt
+
   build:
     commands:
       - echo "Building the Tkinter To-Do App into an executable..."
       - pyinstaller --onefile --noconsole todo_app.py || (echo "PyInstaller failed. Check the error logs." && exit 1)
       - ls -al dist  # List files in the dist folder to ensure output is generated
+
   post_build:
     commands:
       - echo "Packaging complete. Preparing for deployment..."
       - mkdir -p output
-      - mv dist/todo_app ./output/
+      - mv dist/todo_app ./output/  # Move the executable to the output directory
 
 artifacts:
   files:
