@@ -1,3 +1,40 @@
+# version: 0.2
+
+# phases:
+#   install:
+#     runtime-versions:
+#       python: 3.11
+#     commands:
+#       - echo "Installing dependencies..."
+#       - python --version
+#       - echo "No dependencies to install. Proceeding with build."
+
+#   build:
+#     commands:
+#       - echo "Building the To-Do App..."
+#       - echo "No actual build step required for this CLI app."
+#       - echo "The app is ready for deployment or further use."
+
+#   post_build:
+#     commands:
+#       - echo "Build complete. Preparing to upload artifacts."
+#       - mkdir -p output
+#       - echo "Output folder created."
+#       - cp todo_app.py output/
+#       - echo "Files copied to the output folder."
+#       - echo "Uploading to S3 bucket khubbucket/output/..."
+#       - aws s3 cp output/ s3://khubbucket/output/ --recursive
+#       - echo "Files uploaded to S3."
+
+# artifacts:
+#   files:
+#     - output/*
+#   base-directory: '.'
+#   discard-paths: yes
+#   s3:
+#     bucket: khubbucket
+#     key: output/
+
 version: 0.2
 
 phases:
@@ -5,32 +42,34 @@ phases:
     runtime-versions:
       python: 3.11
     commands:
-      - echo "Installing dependencies..."
+      - echo Installing dependencies...
+      - pip install --upgrade pip
+      - pip install -r requirements.txt
+      - pip install pyinstaller  # Install PyInstaller for creating .exe file
+  pre_build:
+    commands:
+      - echo Running pre-build checks...
       - python --version
-      - echo "No dependencies to install. Proceeding with build."
-
+      - pip --version
   build:
     commands:
-      - echo "Building the To-Do App..."
-      - echo "No actual build step required for this CLI app."
-      - echo "The app is ready for deployment or further use."
-
+      - echo Building the executable...
+      - pyinstaller --onefile todo_app.py  # Replace with your Python script file
+      - echo Build complete. Executable created in 'dist' directory.
   post_build:
     commands:
-      - echo "Build complete. Preparing to upload artifacts."
-      - mkdir -p output
-      - echo "Output folder created."
-      - cp todo_app.py output/
-      - echo "Files copied to the output folder."
-      - echo "Uploading to S3 bucket khubbucket/output/..."
-      - aws s3 cp output/ s3://khubbucket/output/ --recursive
-      - echo "Files uploaded to S3."
+      - echo Preparing artifacts...
+      - mkdir -p artifacts
+      - mv dist/todo_app.exe artifacts/  # Move the .exe file to the artifacts folder
+      - echo Artifacts prepared.
 
 artifacts:
   files:
-    - output/*
-  base-directory: '.'
+    - artifacts/todo_app.exe  # Specify the path to your .exe file
   discard-paths: yes
+  base-directory: artifacts
   s3:
     bucket: khubbucket
     key: output/
+    path: todo-app-builds
+
