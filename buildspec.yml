@@ -47,11 +47,13 @@ phases:
       - pip install pyinstaller==5.11.0  # Install PyInstaller for creating .exe file
       - pip install streamlit==1.16.0    # Install Streamlit for app functionality
       - pip install pytest==7.4.0        # Install Pytest for testing
+
   pre_build:
     commands:
       - echo Running pre-build checks...
       - python --version
       - pip --version
+
   build:
     commands:
       - echo Running tests...
@@ -62,19 +64,28 @@ phases:
       - echo Build complete. Executable created in 'dist' directory.
       - echo Checking if dist folder exists...
       - ls dist || echo "dist folder not found"  # Ensure dist folder exists and print its contents
+
   post_build:
     commands:
       - echo Preparing artifacts...
       - mkdir -p artifacts
-      - if [ -d "dist" ]; then mv dist/todo_app.exe artifacts/; else echo "dist folder not found, skipping .exe"; fi  # Move .exe to artifacts if dist exists
-      - echo Artifacts prepared.
+      # Check if dist folder exists and move the executable to artifacts
+      - |
+        if [ -d "dist" ]; then 
+          mv dist/todo_app.exe artifacts/;
+          echo "Executable moved to artifacts.";
+        else 
+          echo "dist folder not found, skipping .exe";
+        fi
+      # Copy the report to the artifacts folder as well
+      - mv report.xml artifacts/  # Move test report to artifacts folder
 
 artifacts:
   files:
-    - artifacts/todo_app.exe  # Specify the path to your .exe file
-    - report.xml              # Include the test report if needed
+    - artifacts/todo_app.exe      # Specify the path to your .exe file in artifacts folder
+    - artifacts/report.xml        # Include the test report in the artifacts
   discard-paths: yes
   base-directory: artifacts
   s3:
     bucket: khubbucket
-    path: output/todo-app-builds  # Store in the 'output' folder in the S3 bucket
+    path: output/                  # Store in the 'output' folder in the S3 bucket
