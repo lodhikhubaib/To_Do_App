@@ -1,0 +1,2 @@
+pyinstaller==6.11.1  # Specify the version you're using locally
+tkinter==8.6.11      # Version can vary based on your system (this is usually pre-installed)
