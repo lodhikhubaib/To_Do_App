@@ -5,8 +5,8 @@ phases:
     runtime-versions:
       python: 3.11  # Use Python 3.11
     commands:
-      - echo "Installing required Python packages..."
-      - pip install -r requirements.txt  # Install dependencies from requirements.txt
+      - echo "Installing PyInstaller..."
+      - pip install pyinstaller  # Install PyInstaller directly
 
   build:
     commands:
@@ -22,4 +22,4 @@ phases:
 
 artifacts:
   files:
-    - output/*
+    - output/*  # Include the executable in the build artifacts
