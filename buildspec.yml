@@ -5,28 +5,26 @@ phases:
     runtime-versions:
       python: 3.11  # Use Python 3.11
     commands:
-      - echo "Installing PyInstaller..."
-      - pip install pyinstaller  # Install PyInstaller directly
+      - echo "No dependencies to install. Proceeding with build."
 
   build:
     commands:
-      - echo "Listing files in the current directory:"
-      - ls -al  # List files to ensure the todo_app.py is present
-      - echo "Building the Tkinter To-Do App into an executable..."
-      - pyinstaller --onefile --noconsole todo_app.py || (echo "PyInstaller failed. Check the error logs." && exit 1)
-      - echo "Listing files in dist folder:"
-      - ls -al dist  # List files to check if the executable is created
-      - ls -al dist/*  # Check all files in dist folder
+      - echo "Building the To-Do App..."
+      - echo "No actual build step required for this CLI app."
+      - echo "The app is ready for deployment or further use."
 
   post_build:
     commands:
-      - echo "Packaging complete. Preparing for deployment..."
-      - ls -al dist  # Ensure the executable is in dist
-      - mkdir -p output
-      - mv dist/todo_app ./output/ || (echo "Move failed. Check if the file exists in dist." && exit 1)
-      - echo "Uploading the executable to S3..."
-      - aws s3 cp ./output/todo_app s3://khubbucket/output/todo_app --N.Virginia
+      - echo "Build complete. Preparing to upload artifacts."
+      - mkdir -p output  # Create the output folder if it doesn't exist
+      - cp todo_app.py output/  # Copy your main app script to the output folder
+      - echo "Files copied to the output folder."
 
 artifacts:
   files:
-    - output/*  # Include the executable in the build artifacts
+    - output/*  # Include everything inside the output folder
+  base-directory: '.'  # The root directory of your repository
+  discard-paths: yes  # Upload everything as flat files in the S3 folder
+  s3:
+    bucket: khubbucket  # Replace with your actual bucket name
+    key: output/  # The S3 folder where you want the artifacts uploaded
