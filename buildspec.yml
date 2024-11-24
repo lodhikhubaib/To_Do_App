@@ -68,7 +68,8 @@ phases:
   post_build:
     commands:
       - echo Preparing artifacts...
-      - mkdir -p artifacts
+      - mkdir -p artifacts  # Ensure the artifacts directory exists
+      - echo "Artifacts directory created."
       # Check if dist folder exists and move the executable to artifacts
       - |
         if [ -d "dist" ]; then 
@@ -77,8 +78,18 @@ phases:
         else 
           echo "dist folder not found, skipping .exe";
         fi
-      # Copy the report to the artifacts folder as well
-      - mv report.xml artifacts/  # Move test report to artifacts folder
+      # Check if the report file exists and move it to artifacts as well
+      - |
+        if [ -f "report.xml" ]; then
+          mv report.xml artifacts/;
+          echo "Report moved to artifacts.";
+        else
+          echo "report.xml not found, skipping report.";
+        fi
+
+      # Debugging: List the contents of the artifacts directory to ensure files are there
+      - echo "Listing files in the artifacts directory:"
+      - ls -R artifacts/  # List all files and directories in artifacts folder
 
 artifacts:
   files:
@@ -86,6 +97,7 @@ artifacts:
     - artifacts/report.xml        # Include the test report in the artifacts
   discard-paths: yes
   base-directory: artifacts
-  s3:
-    bucket: khubbucket
-    path: output/                  # Store in the 'output' folder in the S3 bucket
+s3:
+  bucket: khubbucket
+  path: artifacts/  # Upload to the existing 'artifacts' folder in your bucket
+                 # Store in the 'output' folder in the S3 bucket
