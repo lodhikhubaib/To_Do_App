@@ -1,77 +1,82 @@
-import tkinter as tk
-from tkinter import messagebox
+# Simple To-Do App in Python
 
-# Initialize the main window and task list
+import os
+
+# Initialize a global list to store tasks
 tasks = []
+
+def show_menu():
+    """Display the menu options."""
+    print("\nTo-Do List Menu:")
+    print("1. View Tasks")
+    print("2. Add Task")
+    print("3. Mark Task as Completed")
+    print("4. Delete Task")
+    print("5. Exit")
+
+def view_tasks():
+    """Display all tasks."""
+    print("\nYour To-Do List:")
+    if not tasks:
+        print("No tasks found!")
+    else:
+        for i, task in enumerate(tasks, 1):
+            status = "[✓]" if task['completed'] else "[ ]"
+            print(f"{i}. {status} {task['task']}")
 
 def add_task():
     """Add a new task to the list."""
-    task = task_entry.get()
-    if task:
-        tasks.append({'task': task, 'completed': False})
-        update_task_list()
-        task_entry.delete(0, tk.END)
-    else:
-        messagebox.showwarning("Input Error", "Task cannot be empty!")
+    task_description = input("\nEnter the task: ")
+    tasks.append({'task': task_description, 'completed': False})
+    print(f"Task '{task_description}' added!")
 
-def update_task_list():
-    """Update the listbox with the current tasks."""
-    task_list.delete(0, tk.END)  # Clear the listbox
-    for i, task in enumerate(tasks, 1):
-        status = "[✓]" if task['completed'] else "[ ]"
-        task_list.insert(tk.END, f"{i}. {status} {task['task']}")
-
-def mark_task_completed():
-    """Mark the selected task as completed."""
-    selected = task_list.curselection()
-    if selected:
-        index = selected[0]
-        tasks[index]['completed'] = True
-        update_task_list()
-    else:
-        messagebox.showwarning("Selection Error", "No task selected!")
+def complete_task():
+    """Mark a task as completed."""
+    view_tasks()
+    if tasks:
+        try:
+            task_number = int(input("\nEnter the task number to mark as completed: "))
+            if 1 <= task_number <= len(tasks):
+                tasks[task_number - 1]['completed'] = True
+                print(f"Task '{tasks[task_number - 1]['task']}' marked as completed!")
+            else:
+                print("Invalid task number!")
+        except ValueError:
+            print("Please enter a valid number!")
 
 def delete_task():
-    """Delete the selected task."""
-    selected = task_list.curselection()
-    if selected:
-        index = selected[0]
-        del tasks[index]
-        update_task_list()
-    else:
-        messagebox.showwarning("Selection Error", "No task selected!")
+    """Delete a task from the list."""
+    view_tasks()
+    if tasks:
+        try:
+            task_number = int(input("\nEnter the task number to delete: "))
+            if 1 <= task_number <= len(tasks):
+                removed_task = tasks.pop(task_number - 1)
+                print(f"Task '{removed_task['task']}' deleted!")
+            else:
+                print("Invalid task number!")
+        except ValueError:
+            print("Please enter a valid number!")
 
-# Create the main window
-root = tk.Tk()
-root.title("To-Do List App")
-root.geometry("400x400")
+def main():
+    """Main function to run the To-Do app."""
+    while True:
+        show_menu()
+        choice = input("\nChoose an option (1-5): ")
+        
+        if choice == '1':
+            view_tasks()
+        elif choice == '2':
+            add_task()
+        elif choice == '3':
+            complete_task()
+        elif choice == '4':
+            delete_task()
+        elif choice == '5':
+            print("\nGoodbye! Your To-Do list is saved locally.")
+            break
+        else:
+            print("Invalid choice! Please select a valid option.")
 
-# Task Entry Frame
-entry_frame = tk.Frame(root)
-entry_frame.pack(pady=10)
-
-task_entry = tk.Entry(entry_frame, width=30)
-task_entry.pack(side=tk.LEFT, padx=10)
-
-add_button = tk.Button(entry_frame, text="Add Task", command=add_task)
-add_button.pack(side=tk.LEFT)
-
-# Task List Frame
-task_frame = tk.Frame(root)
-task_frame.pack(pady=10)
-
-task_list = tk.Listbox(task_frame, width=50, height=15)
-task_list.pack()
-
-# Action Buttons
-action_frame = tk.Frame(root)
-action_frame.pack(pady=10)
-
-complete_button = tk.Button(action_frame, text="Mark Completed", command=mark_task_completed)
-complete_button.pack(side=tk.LEFT, padx=10)
-
-delete_button = tk.Button(action_frame, text="Delete Task", command=delete_task)
-delete_button.pack(side=tk.LEFT, padx=10)
-
-# Start the Tkinter event loop
-root.mainloop()
+if __name__ == "__main__":
+    main()
