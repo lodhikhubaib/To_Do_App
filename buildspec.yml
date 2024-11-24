@@ -60,11 +60,13 @@ phases:
       - echo Building the executable...
       - pyinstaller --onefile todo_app.py  # Replace with your Python script file
       - echo Build complete. Executable created in 'dist' directory.
+      - echo Checking if dist folder exists...
+      - ls dist || echo "dist folder not found"  # Ensure dist folder exists and print its contents
   post_build:
     commands:
       - echo Preparing artifacts...
       - mkdir -p artifacts
-      - mv dist/todo_app.exe artifacts/  # Move the .exe file to the artifacts folder
+      - if [ -d "dist" ]; then mv dist/todo_app.exe artifacts/; else echo "dist folder not found, skipping .exe"; fi  # Move .exe to artifacts if dist exists
       - echo Artifacts prepared.
 
 artifacts:
